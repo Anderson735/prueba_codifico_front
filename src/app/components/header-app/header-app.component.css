@@ -1,0 +1,5 @@
+.mat-toolbar.mat-primary {
+    background-color: black; /* Color de fondo */
+    color: white; /* Color del texto */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }

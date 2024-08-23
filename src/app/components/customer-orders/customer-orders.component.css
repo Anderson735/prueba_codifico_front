@@ -1,0 +1,5 @@
+.container {
+    box-shadow: 0 4px 2px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+    border: 1px solid #ececec; /* Color y grosor del borde */
+    border-radius: 8px; /* Opcional: bordes redondeados */
+}

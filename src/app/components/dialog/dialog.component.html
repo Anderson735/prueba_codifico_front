@@ -1,0 +1,270 @@
+<app-header-app [color]="data.color" [text]="data.text"></app-header-app>
+<mat-dialog-content >
+  @if (data.board) {
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 "  matSort (matSortChange)="announceSortChange($event)">
+            <ng-container matColumnDef="orderid">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header
+              sortActionDescription="Sort by order id">Order Id</th>
+              <td mat-cell *matCellDef="let element">{{ element.orderid }}</td>
+            </ng-container>
+            <ng-container matColumnDef="requireddate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header
+              sortActionDescription="Sort by required date">Required Date</th>
+              <td mat-cell *matCellDef="let element">{{ element.requireddate | date:"dd/MM/yyyy, HH:mm:ss aaa" }}</td>
+            </ng-container>
+            <ng-container matColumnDef="shippeddate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header
+              sortActionDescription="Sort by shipped date">Shipped Date</th>
+              <td mat-cell *matCellDef="let element">{{ element.shippeddate | date:"dd/MM/yyyy, HH:mm:ss aaa" }}</td>
+            </ng-container>
+            <ng-container matColumnDef="shipname">
+              <th mat-header-cell *matHeaderCellDef  mat-sort-header
+              sortActionDescription="Sort by ship name">Ship Name</th>
+              <td mat-cell *matCellDef="let element">{{ element.shipname }}</td>
+            </ng-container>
+            <ng-container matColumnDef="shipaddress">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header
+              sortActionDescription="Sort by ship address">Ship Address</th>
+              <td mat-cell *matCellDef="let element">{{ element.shipaddress }}</td>
+            </ng-container>
+            <ng-container matColumnDef="shipcity">
+              <th mat-header-cell *matHeaderCellDef  mat-sort-header
+              sortActionDescription="Sort by ship city">Ship City</th>
+              <td mat-cell *matCellDef="let element">{{ element.shipcity }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+          <mat-paginator
+            class="mt-2"
+            [length]="100"
+            [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            aria-label="Select page"
+          >
+          </mat-paginator>
+      
+        </div>
+        <div class="col-12 text-end ">
+          <button style="color: red;" mat-button (click)="onNoClick()">CLOSE</button>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="container">
+      <form [formGroup]="formCustomer">
+        <h2 class="text-left mb-4">Order</h2>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <mat-form-field class="w-100">
+              <mat-label>Employee</mat-label>
+              <mat-select formControlName="employee">
+                @for(employ of listEmployees; track employ){
+                  <mat-option [value]="employ.empid">{{employ.fullName}}</mat-option>
+                }
+                
+              </mat-select>
+              @if(employee.hasError('required')){
+                <mat-error>
+                  Employee is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field class="w-100">
+              <mat-label>Shipper</mat-label>
+              <mat-select formControlName="shipper">
+                @for(ship of listShipper; track ship){
+                  <mat-option [value]="ship.shipperid">{{ship.companyname}}</mat-option>
+                }
+              </mat-select>
+              @if(shipper.hasError('required')){
+                <mat-error>
+                  Shipper is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+    
+        <!-- Segundo grupo de campos (1 columna) -->
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Ship Name</mat-label>
+              <input matInput placeholder="Ex. Pizza" value="Sushi" formControlName="shipName"/>
+              @if(shipName.hasError('required')){
+                <mat-error>
+                  Ship Name is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+    
+        <!-- Tercer grupo de campos (3 columnas) -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Ship Address</mat-label>
+              <input matInput placeholder="Ex. 5" formControlName="shipAddress" />
+              @if(shipAddress.hasError('required')){
+                <mat-error>
+                  Ship Address is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Ship City</mat-label>
+              <input matInput  placeholder="Ex. 10.00" formControlName="shipCity"/>
+              @if(shipCity.hasError('required')){
+                <mat-error>
+                  Ship City is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Ship Country</mat-label>
+              <input matInput placeholder="Ex. 50.00" formControlName="shipCountry" />
+              @if(shipCountry.hasError('required')){
+                <mat-error>
+                  Ship Country is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+    
+        <!-- Cuarto grupo de campos (3 columnas) -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <mat-form-field class="w-100">
+              <mat-label>Order Date</mat-label>
+              <input matInput [matDatepicker]="pickerOrderDate" formControlName="orderDate">
+              <mat-datepicker-toggle matIconSuffix [for]="pickerOrderDate"></mat-datepicker-toggle>
+              <mat-datepicker #pickerOrderDate></mat-datepicker>
+              @if(orderDate.hasError('required')){
+                <mat-error>
+                  Order Date is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field class="w-100">
+              <mat-label>Required Date</mat-label>
+              <input matInput [matDatepicker]="pickerRequiredDate" formControlName="requiredDate">
+              <mat-datepicker-toggle matIconSuffix [for]="pickerRequiredDate"></mat-datepicker-toggle>
+              <mat-datepicker #pickerRequiredDate></mat-datepicker>
+              @if(requiredDate.hasError('required')){
+                <mat-error>
+                  Required Date is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field class="w-100">
+              <mat-label>Shipped Date</mat-label>
+              <input matInput [matDatepicker]="pickerShippedDate" formControlName="shippedDate">
+              <mat-datepicker-toggle matIconSuffix [for]="pickerShippedDate"></mat-datepicker-toggle>
+              <mat-datepicker #pickerShippedDate></mat-datepicker>
+              @if(shippedDate.hasError('required')){
+                <mat-error>
+                  Shipped Date is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+    
+        <!-- Quinto grupo de campos (1 columna) -->
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Freight</mat-label>
+              <input matInput  placeholder="Ex. 50.00" formControlName="freight" />
+              @if(freight.hasError('required')){
+                <mat-error>
+                  Freight is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+    
+        <!-- Título 2 -->
+        <h2 class="text-left mb-4">Order Details</h2>
+    
+        <!-- Sexto grupo de campos (1 columna) -->
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <mat-form-field class="w-100">
+              <mat-label>Product</mat-label>
+              <mat-select formControlName="product">
+                @for(prod of listProducts; track prod){
+                  <mat-option [value]="prod.productid">{{prod.productname}}</mat-option>
+                }
+              </mat-select>
+              @if(product.hasError('required')){
+                <mat-error>
+                  Product is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+    
+        <!-- Séptimo grupo de campos (3 columnas) -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Unit Price</mat-label>
+              <input matInput  placeholder="Ex. 20.00" formControlName="unitPrice" />
+              @if (unitPrice.hasError('required')){
+                <mat-error>
+                  Delivery Date is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Quantity</mat-label>
+              <input matInput  placeholder="Ex. 20.00" formControlName="quantity"/>
+              @if(quantity.hasError('required')){
+                <mat-error >
+                  Quantity is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Discount</mat-label>
+              <input matInput  placeholder="Ex. 70.00" formControlName="discount" />
+              @if(discount.hasError('required')){
+                <mat-error>
+                  Discount is required.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="col-12 text-end ">
+          <button style="color: green;" mat-button (click)="onNoClick()">CLOSE</button>
+          <button style="color: green;" mat-button (click)="createOrder()">SAVE</button>
+        </div>
+      </form>
+  
+    </div>
+  }
+</mat-dialog-content>
